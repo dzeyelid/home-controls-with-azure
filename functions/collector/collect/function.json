@@ -1,0 +1,18 @@
+{
+  "bindings": [
+    {
+      "name": "myTimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 */1 * * * *"
+    },
+    {
+      "name": "outputEventHubMessage",
+      "type": "eventHub",
+      "direction": "out",
+      "eventHubName": "remo",
+      "connection": "eventHubConnectionString"
+    }
+  ],
+  "scriptFile": "../dist/collect/index.js"
+}
