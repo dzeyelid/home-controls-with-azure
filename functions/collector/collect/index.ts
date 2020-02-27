@@ -1,30 +1,28 @@
-import { AzureFunction } from "@azure/functions"
-import axios from "axios"
-import EventHubBindingContext from "../core/interfaces/eventHubBindingContext"
-import Device from "../core/interfaces/remo/device"
+﻿/*
+ * This function is not intended to be invoked directly. Instead it will be
+ * triggered by an orchestrator function.
+ * 
+ * Before running this sample, please:
+ * - create a Durable orchestration function
+ * - create a Durable HTTP starter function
+ * - run 'npm install durable-functions' from the wwwroot folder of your
+ *   function app in Kudu
+ */
 
-const timerTrigger: AzureFunction = async function (context: EventHubBindingContext, myTimer: any): Promise<void> {
-    var timeStamp = new Date().toISOString();
-    
-    if (myTimer.IsPastDue)
-    {
-        context.log('Timer function is running late!');
+import { AzureFunction, Context } from "@azure/functions"
+import collectRemoData from "../core/CollectRemoData";
+import CollectedRemoData from "../core/interfaces/remo/CollectedRemoData";
+
+const activityFunction: AzureFunction = async function (context: Context): Promise<CollectedRemoData> {
+    const previousData = context.bindings.previousData;
+    const result: CollectedRemoData = await collectRemoData(previousData);
+    if (Object.keys(result.updatedEvents).length) {
+        context.bindings.outputEventHubMessage = JSON.stringify({
+            "iothub-connection-device-id": 'remo',
+            ...result.updatedEvents
+        });
     }
-    context.log('Timer trigger function ran!', timeStamp);
-
-    const url = 'https://api.nature.global/1/devices';
-    const apiKey = process.env.API_KEY || '';
-    const response = await axios.get(url, {
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-        }
-    });
-    const data: Device[] = response.data;
-    context.bindings.outputEventHubMessage = JSON.stringify({
-        "iothub-connection-device-id": 'remo',
-        ...data[0].newest_events
-    });
+    return result;
 };
 
-export default timerTrigger;
+export default activityFunction;

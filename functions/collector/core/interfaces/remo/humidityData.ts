@@ -1,3 +1,3 @@
-import SensorData from "./sensorData"
+import SensorData from "./SensorData"
 
 export default interface HumidityData extends SensorData {}

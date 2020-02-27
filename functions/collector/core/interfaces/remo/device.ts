@@ -1,5 +1,5 @@
-import User from "./user"
-import Event from "./event"
+import User from "./User"
+import Event from "./Event"
 
 export default interface Device {
   name: string

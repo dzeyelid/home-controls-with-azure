@@ -1,7 +1,7 @@
-import HumidityData from "./humidityData"
-import IlluminationData from "./illuminationData"
-import MovementData from "./movementData"
-import TemperatureData from "./temperatureData"
+import HumidityData from "./HumidityData"
+import IlluminationData from "./IlluminationData"
+import MovementData from "./MovementData"
+import TemperatureData from "./TemperatureData"
 
 export default interface Event {
   hu: HumidityData
